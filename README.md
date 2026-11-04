@@ -1,4 +1,4 @@
-# bolt-launcher snap
+# bolt-runescape-launcher snap
 
 An **unofficial** snap package of [Bolt](https://codeberg.org/Adamcake/Bolt),
 a free-software third-party launcher for RuneScape and Old School RuneScape.
@@ -16,7 +16,7 @@ about problems you hit while using this snap.
 
 Only report upstream when **all** of the following are true:
 
-1. You built the **same Bolt version** as the snap (see `snap info bolt-launcher`)
+1. You built the **same Bolt version** as the snap (see `snap info bolt-runescape-launcher`)
    from source yourself, following
    [Bolt's build instructions](https://codeberg.org/Adamcake/Bolt#building),
    outside of any snap.
@@ -28,7 +28,7 @@ If you are not sure, open an issue here first.
 ## Installing
 
 ```sh
-sudo snap install bolt-launcher
+sudo snap install bolt-runescape-launcher
 ```
 
 ## Known limitations
@@ -37,17 +37,17 @@ sudo snap install bolt-launcher
 - `umu-launcher` is not bundled, so the official OSRS client runs on plain Wine.
 - Discord rich presence does not work because strict confinement blocks
   access to Discord's IPC socket.
-- Data lives in `~/snap/bolt-launcher/current/`, not `~/.local/share/bolt-launcher`.
+- Data lives in `~/snap/bolt-runescape-launcher/current/`, not `~/.local/share/bolt-launcher`.
   Existing data from a non-snap Bolt install is not migrated.
 
 ## Building
 
 ```sh
 snapcraft pack
-sudo snap install --dangerous ./bolt-launcher_*.snap
-sudo snap connect bolt-launcher:browser-sandbox
-sudo snap connect bolt-launcher:wayland
-sudo snap connect bolt-launcher:joystick   # optional, for controllers
+sudo snap install --dangerous ./bolt-runescape-launcher_*.snap
+sudo snap connect bolt-runescape-launcher:browser-sandbox
+sudo snap connect bolt-runescape-launcher:wayland
+sudo snap connect bolt-runescape-launcher:joystick   # optional, for controllers
 ```
 
 ## Updating to a new Bolt release

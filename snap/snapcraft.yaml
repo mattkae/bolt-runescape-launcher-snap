@@ -1,4 +1,4 @@
-name: bolt-launcher
+name: bolt-runescape-launcher
 title: Bolt Launcher (unofficial snap)
 base: core26
 version: '0.24.0'
@@ -36,7 +36,7 @@ platforms:
   amd64:
 
 apps:
-  bolt-launcher:
+  bolt-runescape-launcher:
     command: bin/bolt-launcher-wrapper
     desktop: usr/share/applications/bolt-launcher.desktop
     common-id: bolt-launcher

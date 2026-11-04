@@ -1,0 +1,45 @@
+name: Publish snap
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'snap/**'
+      - '.github/workflows/publish.yml'
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Snap Store channel to release to
+        type: choice
+        default: edge
+        options:
+          - edge
+          - beta
+          - candidate
+          - stable
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-snap
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build snap
+        id: build
+        uses: snapcore/action-build@v1
+
+      - name: Upload to Snap Store
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          # Pushes to main have no inputs, so they go to edge
+          release: ${{ inputs.channel || 'edge' }}

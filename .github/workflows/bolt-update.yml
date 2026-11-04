@@ -1,0 +1,70 @@
+name: Check for Bolt release
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: bolt-update
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare snap version with latest Bolt release
+        id: check
+        run: |
+          set -eu
+          yaml=snap/snapcraft.yaml
+          current=$(sed -n "s/^version: *'\{0,1\}\([^']*\)'\{0,1\}$/\1/p" "$yaml")
+
+          # /releases/latest skips drafts and prereleases
+          latest=$(curl -fsSL https://codeberg.org/api/v1/repos/Adamcake/Bolt/releases/latest | jq -r .tag_name)
+          if [ -z "$latest" ] || [ "$latest" = null ]; then
+            echo "::error::Could not determine latest Bolt release"
+            exit 1
+          fi
+
+          echo "Snap: $current, upstream: $latest"
+          newest=$(printf '%s\n%s\n' "$current" "$latest" | sort -V | tail -n1)
+          if [ "$latest" = "$current" ] || [ "$newest" != "$latest" ]; then
+            echo "Up to date"
+            echo "update=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          sed -i "s/^version: .*/version: '$latest'/" "$yaml"
+          # Only touch the source-tag right after the Bolt source, not OpenSSL's
+          sed -i "/source: https:\/\/codeberg.org\/Adamcake\/Bolt.git/{n;s/source-tag: .*/source-tag: '$latest'/}" "$yaml"
+          git diff --exit-code --quiet "$yaml" && { echo "::error::snapcraft.yaml did not change"; exit 1; }
+
+          echo "update=true" >> "$GITHUB_OUTPUT"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        if: steps.check.outputs.update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: bolt-update/${{ steps.check.outputs.latest }}
+          delete-branch: true
+          commit-message: Update Bolt to ${{ steps.check.outputs.latest }}
+          title: Update Bolt to ${{ steps.check.outputs.latest }}
+          body: |
+            Bolt [${{ steps.check.outputs.latest }}](https://codeberg.org/Adamcake/Bolt/releases/tag/${{ steps.check.outputs.latest }}) is out (snap is on ${{ steps.check.outputs.current }}).
+
+            This PR only bumps `version` and the `bolt` part's `source-tag`. Before merging:
+
+            - [ ] Check the release notes for a new CEF version, and update the `cef` part's URL and checksum if needed
+            - [ ] Check for new or removed git submodules in `source-submodules`
+            - [ ] `snapcraft pack` and launch the snap locally
+
+            Opened automatically by the nightly `bolt-update` workflow.

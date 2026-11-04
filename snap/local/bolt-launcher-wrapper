@@ -1,0 +1,10 @@
+#!/bin/sh -eu
+# Launch Bolt from inside the snap.
+#
+# The Bolt plugin library is injected into the RS3 client with
+# LD_PRELOAD=libbolt-plugin.so, so its directory must be on the library path.
+# The RS3 client also needs OpenSSL 1.1, which is bundled separately.
+export LD_LIBRARY_PATH="${SNAP}/lib:${SNAP}/usr/lib/openssl-1.1${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
+cd "${SNAP}/opt/bolt-launcher"
+exec ./bolt "$@"

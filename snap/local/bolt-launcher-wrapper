@@ -6,5 +6,8 @@
 # The RS3 client also needs OpenSSL 1.1, which is bundled separately.
 export LD_LIBRARY_PATH="${SNAP}/lib:${SNAP}/usr/lib/openssl-1.1${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
+# Chromium's internal sandbox needs browser-support's allow-sandbox attribute,
+# which the store refuses without manual review. Strict confinement already
+# sandboxes the snap, so CEF's own sandbox is disabled instead.
 cd "${SNAP}/opt/bolt-launcher"
-exec ./bolt "$@"
+exec ./bolt --no-sandbox "$@"

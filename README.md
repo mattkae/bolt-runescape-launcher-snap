@@ -47,7 +47,7 @@ sudo snap install bolt-runescape-launcher
 ```sh
 snapcraft pack
 sudo snap install --dangerous ./bolt-runescape-launcher_*.snap
-sudo snap connect bolt-runescape-launcher:browser-sandbox
+sudo snap connect bolt-runescape-launcher:browser-support
 sudo snap connect bolt-runescape-launcher:wayland
 sudo snap connect bolt-runescape-launcher:joystick   # optional, for controllers
 ```

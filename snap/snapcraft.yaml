@@ -46,7 +46,7 @@ apps:
       PATH: $SNAP/wine/bin:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/bin:$PATH
     plugs:
       - audio-playback
-      - browser-sandbox
+      - browser-support
       - desktop
       - desktop-legacy
       - home
@@ -60,9 +60,6 @@ apps:
       - x11
 
 plugs:
-  browser-sandbox:
-    interface: browser-support
-    allow-sandbox: true
   # Bolt and its plugin library use POSIX shared memory named /bolt-*, which
   # strict confinement only allows inside a private /dev/shm.
   shm:

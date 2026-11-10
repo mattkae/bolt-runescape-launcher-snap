@@ -44,6 +44,10 @@ apps:
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-amd64
       PATH: $SNAP/wine/bin:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/bin:$PATH
+      # libasound only looks for its config and plugins under the host's /usr
+      ALSA_CONFIG_DIR: $SNAP/usr/share/alsa
+      ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf:$SNAP/etc/alsa/asound.conf
+      ALSA_PLUGIN_DIR: $SNAP/usr/lib/x86_64-linux-gnu/alsa-lib
     plugs:
       - audio-playback
       - browser-support
@@ -208,8 +212,19 @@ parts:
       - libxinerama1
       - libxrender1
 
+  # ALSA -> PulseAudio bridge. Only the pulse plugins are kept; the package's
+  # other plugins would drag in ffmpeg and jack.
+  alsa-pulse:
+    plugin: nil
+    stage-packages:
+      - libasound2-plugins
+    stage:
+      - usr/lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_pulse.so
+      - usr/lib/x86_64-linux-gnu/alsa-lib/libasound_module_ctl_pulse.so
+
   wrapper:
     plugin: dump
     source: snap/local
     organize:
       bolt-launcher-wrapper: bin/bolt-launcher-wrapper
+      asound.conf: etc/alsa/asound.conf

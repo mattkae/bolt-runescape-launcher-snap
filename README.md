@@ -6,6 +6,8 @@ a free-software third-party launcher for RuneScape and Old School RuneScape.
 This snap is maintained by Matt Kosarek ([@mattkae](https://github.com/mattkae)).
 It is **not** made, endorsed or supported by the Bolt developers.
 
+![Bolt launcher running from the snap](demo.png)
+
 ## Reporting bugs
 
 **Report every problem with the snap here:**

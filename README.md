@@ -1,5 +1,7 @@
 # bolt-runescape-launcher snap
 
+[![Get it from the Snap Store](https://snapcraft.io/en/dark/install.svg)](https://snapcraft.io/bolt-runescape-launcher)
+
 An **unofficial** snap package of [Bolt](https://codeberg.org/Adamcake/Bolt),
 a free-software third-party launcher for RuneScape and Old School RuneScape.
 

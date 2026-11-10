@@ -9,5 +9,15 @@ export LD_LIBRARY_PATH="${SNAP}/lib:${SNAP}/usr/lib/openssl-1.1${LD_LIBRARY_PATH
 # Chromium's internal sandbox needs browser-support's allow-sandbox attribute,
 # which the store refuses without manual review. Strict confinement already
 # sandboxes the snap, so CEF's own sandbox is disabled instead.
+# The wayland plug is not auto-connected when more than one slot is available
+# (e.g. ubuntu-frame is installed). Without it CEF aborts on the denied socket,
+# so fall back to X11/XWayland instead.
+if [ -n "${WAYLAND_DISPLAY:-}" ] && ! snapctl is-connected wayland; then
+  echo "bolt-launcher: wayland plug not connected, falling back to X11." >&2
+  echo "  Run: sudo snap connect ${SNAP_INSTANCE_NAME}:wayland :wayland" >&2
+  unset WAYLAND_DISPLAY
+  set -- --ozone-platform=x11 "$@"
+fi
+
 cd "${SNAP}/opt/bolt-launcher"
 exec ./bolt --no-sandbox "$@"
